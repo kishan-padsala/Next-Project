@@ -3,20 +3,20 @@ import Button from "../ui/button";
 import classes from "./events-search.module.css";
 
 type eventSearchType = {
-  filterDataHandler: (selectedYear: string, selectedMonth: string) => void;
+  onSearch: (selectedYear: string, selectedMonth: string) => void;
 };
 
 const EventsSearch = (props: eventSearchType) => {
-  const yearRef = useRef<HTMLSelectElement>(null);
-  const monthRef = useRef<HTMLSelectElement>(null);
+  const yearInputRef = useRef<HTMLSelectElement>(null);
+  const monthInputRef = useRef<HTMLSelectElement>(null);
 
   const submitHandler = (event: FormEvent) => {
     event.preventDefault();
 
-    const selectedYear = yearRef.current!.value;
-    const selectedMonth = monthRef.current!.value;
+    const selectedYear = yearInputRef.current!.value;
+    const selectedMonth = monthInputRef.current!.value;
 
-    props.filterDataHandler(selectedYear, selectedMonth);
+    props.onSearch(selectedYear, selectedMonth);
   };
 
   return (
@@ -24,7 +24,7 @@ const EventsSearch = (props: eventSearchType) => {
       <div className={classes.controls}>
         <div className={classes.control}>
           <label htmlFor="year">Year</label>
-          <select id="year" ref={yearRef}>
+          <select id="year" ref={yearInputRef}>
             <option value="2021">2021</option>
             <option value="2022">2022</option>
           </select>
@@ -32,7 +32,7 @@ const EventsSearch = (props: eventSearchType) => {
 
         <div className={classes.control}>
           <label htmlFor="month">Month</label>
-          <select id="month" ref={monthRef}>
+          <select id="month" ref={monthInputRef}>
             <option value="1">January</option>
             <option value="2">February</option>
             <option value="3">March</option>

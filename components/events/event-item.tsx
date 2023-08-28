@@ -1,6 +1,6 @@
 import React from "react";
 import Button from "../ui/button";
-import { DUMMY_EVENTS_TYPE } from "@/dummy-data";
+import { DUMMY_EVENTS_TYPE } from "@/types";
 import DateIcon from "../icons/date-icon";
 import AddressIcon from "../icons/address-icon";
 import ArrowRightIcon from "../icons/arrow-right-icon";

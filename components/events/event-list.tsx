@@ -1,5 +1,5 @@
 import React from "react";
-import { DUMMY_EVENTS_TYPE } from "@/dummy-data";
+import { DUMMY_EVENTS_TYPE } from "@/types";
 import EventItem from "./event-item";
 import classes from "./event-list.module.css";
 

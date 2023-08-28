@@ -9,9 +9,12 @@ const MainHeader = () => {
         <Link href="/">NextEvent</Link>
       </div>
       <nav className={classes.navigation}>
-        <ul>
+        <ul className={classes.ul}>
           <li>
             <Link href="/events">Browse All Events</Link>
+          </li>
+          <li>
+            <Link href="/events/add-new-event">Add New Event</Link>
           </li>
         </ul>
       </nav>

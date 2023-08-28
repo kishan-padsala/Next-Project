@@ -27,7 +27,6 @@
 .navigation a {
   text-decoration: none;
   color: #74dacc;
-  font-size: 1rem;
 }
 
 @media (min-width: 768px) {
@@ -38,4 +37,12 @@
   .navigation a {
     font-size: 1.5rem;
   }
+}
+
+.ul {
+  display: flex;
+}
+
+.ul li {
+  margin-right: 2vw;
 }

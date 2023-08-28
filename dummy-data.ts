@@ -1,12 +1,4 @@
-export type DUMMY_EVENTS_TYPE = {
-  id: string;
-  title: string;
-  description: string;
-  location: string;
-  date: string;
-  image: string;
-  isFeatured: boolean;
-};
+import { DUMMY_EVENTS_TYPE } from "@/types";
 
 const DUMMY_EVENTS: DUMMY_EVENTS_TYPE[] = [
   {
@@ -49,7 +41,7 @@ export function getAllEvents() {
   return DUMMY_EVENTS;
 }
 
-export function getFilteredEvents(dateFilter: any) {
+export function getFilteredEvents(dateFilter: { year: number; month: number }) {
   const { year, month } = dateFilter;
 
   let filteredEvents = DUMMY_EVENTS.filter((event) => {
