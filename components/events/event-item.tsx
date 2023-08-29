@@ -1,5 +1,6 @@
 import React from "react";
 import Button from "../ui/button";
+import Image from "next/image";
 import { DUMMY_EVENTS_TYPE } from "@/types";
 import DateIcon from "../icons/date-icon";
 import AddressIcon from "../icons/address-icon";
@@ -19,7 +20,7 @@ const EventItem = ({ event }: { event: DUMMY_EVENTS_TYPE }) => {
 
   return (
     <li className={classes.item}>
-      <img src={"/" + image} alt={title} />
+      <Image src={"/" + image} alt={title} width={450} height={360} />
       <div className={classes.content}>
         <div className={classes.summary}>
           <h2>{title}</h2>

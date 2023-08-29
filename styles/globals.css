@@ -46,7 +46,8 @@ body {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 400px;
+  width: 436px;
+  height: 670px;
   padding: 40px;
   transform: translate(-50%, -50%);
   box-sizing: border-box;
@@ -68,10 +69,10 @@ body {
 
 .login-box .user-box input {
   width: 100%;
-  padding: 10px 0;
+  padding: 13px 0;
   font-size: 16px;
   color: #fff;
-  margin-bottom: 30px;
+  margin-bottom: 33px;
   border: none;
   border-bottom: 1px solid #fff;
   outline: none;
@@ -205,10 +206,23 @@ body {
 }
 
 .isfeatured {
-  margin-top: 14px;
+  margin-top: 28px;
 }
 
 .isfeatured label {
   color: white;
   margin-left: 6px;
+}
+
+.radio-group {
+  border-bottom: 1px solid #fff;
+}
+
+.image-radio {
+  color: white;
+  margin-left: 6px;
+}
+
+.radio-button {
+  margin-bottom: 10px;
 }

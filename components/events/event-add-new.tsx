@@ -6,6 +6,7 @@ const AddNewEvent = () => {
     setEventImage(e.target.value);
   };
 
+  const formref = useRef<HTMLFormElement>(null);
   const title = useRef<HTMLInputElement>(null);
   const date = useRef<HTMLInputElement>(null);
   const location = useRef<HTMLInputElement>(null);
@@ -50,23 +51,33 @@ const AddNewEvent = () => {
           },
         }
       );
-
-      const data = await response.json();
+      // const data = await response.json();
     };
 
     sendData();
+
+    formref.current?.reset();
   };
 
   return (
     <div className="login-box">
       <h2>Add Event</h2>
-      <form onSubmit={submitHandler}>
+      <form onSubmit={submitHandler} ref={formref}>
         <div className="user-box">
           <input type="text" name="" required ref={title} />
           <label>Title</label>
         </div>
         <div className="user-box">
-          <input type="date" name="" required ref={date} />
+          <input
+            type="text"
+            name=""
+            onFocus={(e) => (e.target.type = "date")}
+            onBlur={(e) => (e.target.type = "text")}
+            id="date"
+            required
+            ref={date}
+          />
+          <label>Date</label>
         </div>
         <div className="user-box">
           <input type="text" name="" required ref={location} />
@@ -76,45 +87,58 @@ const AddNewEvent = () => {
           <input type="text" name="" required ref={description} />
           <label>Description</label>
         </div>
-        <div>
-          <input
-            id="image1"
-            type="radio"
-            name="image"
-            required
-            value="images/coding-event.jpg"
-            checked={eventImage === "images/coding-event.jpg"}
-            onChange={onOptionChange}
-          />
-          <label>Image</label>
-        </div>
-        <div>
-          <input
-            id="image2"
-            type="radio"
-            name="image"
-            required
-            value="images/introvert-event.jpg"
-            checked={eventImage === "images/introvert-event.jpg"}
-            onChange={onOptionChange}
-          />
-          <label>Image</label>
-        </div>
-        <div>
-          <input
-            id="image3"
-            type="radio"
-            name="image"
-            required
-            value="images/extrovert-event.jpg"
-            checked={eventImage === "images/extrovert-event.jpg"}
-            onChange={onOptionChange}
-          />
-          <label>Image</label>
+        <div className="radio-group">
+          <div className="radio-button">
+            <input
+              id="image1"
+              type="radio"
+              name="image"
+              required
+              value="images/coding-event.jpg"
+              checked={eventImage === "images/coding-event.jpg"}
+              onChange={onOptionChange}
+            />
+            <label className="image-radio" htmlFor="image1">
+              Coding event image
+            </label>
+          </div>
+          <div className="radio-button">
+            <input
+              id="image2"
+              type="radio"
+              name="image"
+              required
+              value="images/introvert-event.jpg"
+              checked={eventImage === "images/introvert-event.jpg"}
+              onChange={onOptionChange}
+            />
+            <label className="image-radio" htmlFor="image2">
+              Introvert event image
+            </label>
+          </div>
+          <div className="radio-button">
+            <input
+              id="image3"
+              type="radio"
+              name="image"
+              required
+              value="images/extrovert-event.jpg"
+              checked={eventImage === "images/extrovert-event.jpg"}
+              onChange={onOptionChange}
+            />
+            <label className="image-radio" htmlFor="image3">
+              Extrovert event image
+            </label>
+          </div>
         </div>
         <div className="isfeatured">
-          <input type="checkbox" name="checkbox" ref={isFeatured} />
-          <label>IsFeatured</label>
+          <input
+            id="checkbox"
+            type="checkbox"
+            name="checkbox"
+            ref={isFeatured}
+          />
+          <label htmlFor="checkbox">IsFeatured</label>
         </div>
 
         <button>

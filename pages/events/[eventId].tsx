@@ -1,4 +1,5 @@
 import React, { Fragment } from "react";
+import Head from "next/head";
 import EventSummary from "@/components/event-detail/event-summary";
 import EventLogistics from "@/components/event-detail/event-logistics";
 import EventContent from "@/components/event-detail/event-content";
@@ -7,6 +8,7 @@ import ErrorAlert from "@/components/ui/error-alert";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { DUMMY_EVENTS_TYPE } from "@/types";
 import { getFeaturedEvents } from "@/helper/api-util";
+import Comments from "@/components/input/comments";
 
 const EventDetailPage = ({ event }: { event: DUMMY_EVENTS_TYPE | null }) => {
   if (!event) {
@@ -21,6 +23,10 @@ const EventDetailPage = ({ event }: { event: DUMMY_EVENTS_TYPE | null }) => {
 
   return (
     <Fragment>
+      <Head>
+        <title>{event.title}</title>
+        <meta name="description" content={event.title} />
+      </Head>
       <EventSummary title={event!.title} />
       <EventLogistics
         date={event!.date}
@@ -31,6 +37,7 @@ const EventDetailPage = ({ event }: { event: DUMMY_EVENTS_TYPE | null }) => {
       <EventContent>
         <p>{event!.description}</p>
       </EventContent>
+      <Comments eventId={event.id} />
     </Fragment>
   );
 };

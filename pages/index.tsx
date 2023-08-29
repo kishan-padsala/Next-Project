@@ -1,14 +1,28 @@
 import { getFeaturedEvents } from "@/helper/api-util";
-import React from "react";
+import React, { Fragment } from "react";
+import Head from "next/head";
 import EventList from "@/components/events/event-list";
 import { DUMMY_EVENTS_TYPE } from "@/types";
+import NewsletterRegistration from "@/components/input/newsletter-registration";
 
 const HomePage = ({
   featuredEvents,
 }: {
   featuredEvents: DUMMY_EVENTS_TYPE[];
 }) => {
-  return <EventList items={featuredEvents} />;
+  return (
+    <Fragment>
+      <Head>
+        <title>NextJS Events</title>
+        <meta
+          name="description"
+          content="Find a lot of great events that allow you to evolve..."
+        />
+      </Head>
+      <NewsletterRegistration />
+      <EventList items={featuredEvents} />
+    </Fragment>
+  );
 };
 
 export async function getStaticProps() {
