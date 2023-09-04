@@ -1,28 +1,40 @@
-import { useRef, useState } from 'react';
-import classes from './new-comment.module.css';
+import { FormEvent, useRef, useState } from "react";
+import classes from "./new-comment.module.css";
 
-function NewComment(props) {
+type Props = {
+  onAddComment: ({
+    email,
+    name,
+    text,
+  }: {
+    email: string;
+    name: string;
+    text: string;
+  }) => void;
+};
+
+function NewComment(props: Props) {
   const [isInvalid, setIsInvalid] = useState(false);
 
-  const emailInputRef = useRef();
-  const nameInputRef = useRef();
-  const commentInputRef = useRef();
+  const emailInputRef = useRef<HTMLInputElement>(null);
+  const nameInputRef = useRef<HTMLInputElement>(null);
+  const commentInputRef = useRef<HTMLTextAreaElement>(null);
 
-  function sendCommentHandler(event) {
+  function sendCommentHandler(event: FormEvent) {
     event.preventDefault();
 
-    const enteredEmail = emailInputRef.current.value;
-    const enteredName = nameInputRef.current.value;
-    const enteredComment = commentInputRef.current.value;
+    const enteredEmail = emailInputRef.current?.value;
+    const enteredName = nameInputRef.current?.value;
+    const enteredComment = commentInputRef.current?.value;
 
     if (
       !enteredEmail ||
-      enteredEmail.trim() === '' ||
-      !enteredEmail.includes('@') ||
+      enteredEmail.trim() === "" ||
+      !enteredEmail.includes("@") ||
       !enteredName ||
-      enteredName.trim() === '' ||
+      enteredName.trim() === "" ||
       !enteredComment ||
-      enteredComment.trim() === ''
+      enteredComment.trim() === ""
     ) {
       setIsInvalid(true);
       return;
@@ -36,20 +48,20 @@ function NewComment(props) {
   }
 
   return (
-    <form className={classes.form}>
+    <form className={classes.form} onSubmit={sendCommentHandler}>
       <div className={classes.row}>
         <div className={classes.control}>
-          <label htmlFor='email'>Your email</label>
-          <input type='email' id='email' ref={emailInputRef} />
+          <label htmlFor="email">Your email</label>
+          <input type="email" id="email" ref={emailInputRef} />
         </div>
         <div className={classes.control}>
-          <label htmlFor='name'>Your name</label>
-          <input type='text' id='name' ref={nameInputRef} />
+          <label htmlFor="name">Your name</label>
+          <input type="text" id="name" ref={nameInputRef} />
         </div>
       </div>
       <div className={classes.control}>
-        <label htmlFor='comment'>Your comment</label>
-        <textarea id='comment' rows='5' ref={commentInputRef}></textarea>
+        <label htmlFor="comment">Your comment</label>
+        <textarea id="comment" rows={5} ref={commentInputRef}></textarea>
       </div>
       {isInvalid && <p>Please enter a valid email address and comment!</p>}
       <button>Submit</button>

@@ -26,8 +26,12 @@ const HomePage = ({
 };
 
 export async function getStaticProps() {
-  const featuredEvents = await getFeaturedEvents();
+  // const response = await fetch("/api/getFeaturedEvents");
+  // const data = await response.json();
 
+  // const featuredEvents = data.events;
+
+  const featuredEvents = await getFeaturedEvents();
   return {
     props: {
       featuredEvents: featuredEvents,

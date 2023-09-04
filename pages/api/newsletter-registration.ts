@@ -1,12 +1,37 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+import { insertDocument, connectDatabase } from "@/helper/db-util";
+import { ValidateEmail } from "@/helper/email-validation";
+import { MongoClient } from "mongodb";
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   if (req.method === "POST") {
-    const email = req.body.email;
+    const userEmail: string = req.body.email;
 
-    if (email === "test@gmail.com") {
-      res.status(200).json({ message: "Valid email!" });
+    const result = ValidateEmail(userEmail);
+    if (!result) {
+      res.status(422).json({ message: "Invalid email!" });
+      return;
     }
-    res.status(500).json({ message: "Invalid email!" });
+
+    let client: MongoClient;
+
+    try {
+      client = await connectDatabase();
+    } catch (error) {
+      res.status(500).json({ message: "Connecting to database failed!" });
+      return;
+    }
+
+    try {
+      await insertDocument(client, "newsletter", { email: userEmail });
+      client.close();
+    } catch (error) {
+      res.status(500).json({ message: "Inserting data failed!" });
+      return;
+    }
+
+    res.status(201).json({ message: "Valid email!" });
   }
 }

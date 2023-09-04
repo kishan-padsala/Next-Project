@@ -30,7 +30,7 @@ const AddNewEvent = () => {
     }
 
     const id = Math.random().toString(36).substring(2, 7);
-    const event = {
+    const newEvent = {
       date: eventDate,
       description: eventDescription,
       id: id,
@@ -41,17 +41,13 @@ const AddNewEvent = () => {
     };
 
     const sendData = async () => {
-      const response = await fetch(
-        "https://react-http-10be4-default-rtdb.firebaseio.com/events.json",
-        {
-          method: "POST",
-          body: JSON.stringify(event),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      // const data = await response.json();
+      const response = await fetch("/api/event-add-new", {
+        method: "POST",
+        body: JSON.stringify(newEvent),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
     };
 
     sendData();
