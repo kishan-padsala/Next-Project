@@ -16,3 +16,15 @@ export type commentType = {
   name: string;
   text: string;
 };
+
+export type contextValueType = {
+  notification: notificationDataType | null;
+  showNotification: (notificationData: notificationDataType) => void;
+  hideNotification: () => void;
+};
+
+export type notificationDataType = {
+  title: string;
+  message: string;
+  status: string;
+};

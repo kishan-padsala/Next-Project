@@ -1,5 +1,5 @@
 import { getFeaturedEvents } from "@/helper/api-util";
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import Head from "next/head";
 import EventList from "@/components/events/event-list";
 import { DUMMY_EVENTS_TYPE } from "@/types";
@@ -10,6 +10,18 @@ const HomePage = ({
 }: {
   featuredEvents: DUMMY_EVENTS_TYPE[];
 }) => {
+  // const [featuredEvents, setFeaturedEvents] = useState<DUMMY_EVENTS_TYPE[]>([]);
+
+  // useEffect(() => {
+  //   fetch("/api/getFeaturedEvents")
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       setFeaturedEvents(data.events);
+  //     });
+  // }, []);
+
+  // let featuredEvents: DUMMY_EVENTS_TYPE[] = [];
+  // featuredEvents = allEvents.filter((event) => event.isFeatured === true);
   return (
     <Fragment>
       <Head>
@@ -31,7 +43,10 @@ export async function getStaticProps() {
 
   // const featuredEvents = data.events;
 
-  const featuredEvents = await getFeaturedEvents();
+  const response = await fetch("http://localhost:3000/api/getFeaturedEvents");
+  const data = await response.json();
+
+  const featuredEvents = data.events;
   return {
     props: {
       featuredEvents: featuredEvents,

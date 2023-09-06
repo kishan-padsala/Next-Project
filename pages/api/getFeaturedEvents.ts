@@ -13,13 +13,14 @@ export default async function handler(
     res.status(500).json({ message: "Connecting to database failed!" });
     return;
   }
+
   if (req.method === "GET") {
     try {
-      const eventDocuments = getFeaturedEventDocument(client, "events");
+      const eventDocuments = await getFeaturedEventDocument(client, "events");
       res.status(201).json({ events: eventDocuments });
     } catch (error) {
       res.status(500).json({ message: "Getting events failed!" });
     }
   }
-  client.close();
+  // client.close();
 }

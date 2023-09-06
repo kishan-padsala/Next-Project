@@ -4,19 +4,25 @@ import CommentList from "./comment-list";
 import NewComment from "./new-comment";
 import classes from "./comments.module.css";
 import { commentType } from "@/types";
+import { useContext } from "react";
+import NotificationContext from "@/store/notification-context";
 
 function Comments({ eventId }: { eventId: string }) {
+  const notificationCtx = useContext(NotificationContext);
+  const { showNotification } = notificationCtx;
   const [showComments, setShowComments] = useState(false);
   const [comments, setComments] = useState<commentType[]>([]);
-  const [commentsLoading, setCommentsLoading] = useState(true);
+  const [commentsLoading, setCommentsLoading] = useState(false);
 
   useEffect(() => {
     if (showComments) {
       setCommentsLoading(true);
       fetch(`/api/comments/${eventId}`)
         .then((response) => response.json())
-        .then((data) => setComments(data.comments));
-        setCommentsLoading(false);
+        .then((data) => {
+          setComments(data.comments);
+          setCommentsLoading(false);
+        });
     }
   }, [showComments]);
 
@@ -29,6 +35,11 @@ function Comments({ eventId }: { eventId: string }) {
     name: string;
     text: string;
   }) {
+    showNotification({
+      title: "Sending comment...",
+      message: "Your comment is currently being stored into a database.",
+      status: "pending",
+    });
     fetch(`/api/comments/${eventId}`, {
       method: "POST",
       body: JSON.stringify(commentData),
@@ -36,8 +47,29 @@ function Comments({ eventId }: { eventId: string }) {
         "Content-Type": "application/json",
       },
     })
-      .then((response) => response.json())
-      .then((data) => console.log(data));
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+
+        return response.json().then((data) => {
+          throw new Error(data.message || "Something went wrong!");
+        });
+      })
+      .then((data) => {
+        showNotification({
+          title: "Success!",
+          message: "Your comment was saved!",
+          status: "success",
+        });
+      })
+      .catch((error) => {
+        showNotification({
+          title: "Error!",
+          message: error.message || "Something went wrong!",
+          status: "error",
+        });
+      });
   }
 
   return (
@@ -46,7 +78,8 @@ function Comments({ eventId }: { eventId: string }) {
         {showComments ? "Hide" : "Show"} Comments
       </button>
       {showComments && <NewComment onAddComment={addCommentHandler} />}
-      {showComments && <CommentList items={comments} loading={commentsLoading} />}
+      {showComments && !commentsLoading && <CommentList items={comments} />}
+      {showComments && commentsLoading && <p>Loading...</p>}
     </section>
   );
 }

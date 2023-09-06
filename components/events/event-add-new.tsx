@@ -1,6 +1,10 @@
 import React, { FormEvent, useRef, useState } from "react";
+import { useContext } from "react";
+import NotificationContext from "@/store/notification-context";
 
 const AddNewEvent = () => {
+  const notificationCtx = useContext(NotificationContext);
+  const { showNotification } = notificationCtx;
   const [eventImage, setEventImage] = useState("images/coding-event.jpg");
   const onOptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEventImage(e.target.value);
@@ -20,10 +24,9 @@ const AddNewEvent = () => {
     const eventDate = date.current?.value;
     const eventLocation = location.current?.value;
     const eventDescription = description.current?.value;
-    let eventIsFeatured: string | boolean | undefined =
-      isFeatured.current?.value;
+    let eventIsFeatured: boolean | undefined = isFeatured.current?.checked;
 
-    if (eventIsFeatured === "on") {
+    if (eventIsFeatured) {
       eventIsFeatured = true;
     } else {
       eventIsFeatured = false;
@@ -40,17 +43,42 @@ const AddNewEvent = () => {
       title: eventTitle,
     };
 
-    const sendData = async () => {
-      const response = await fetch("/api/event-add-new", {
-        method: "POST",
-        body: JSON.stringify(newEvent),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-    };
+    console.log(newEvent.title);
+    showNotification({
+      title: "Sending Event...",
+      message: "Your event is currently being stored into a database. ",
+      status: "pending",
+    });
+    fetch("/api/add-get-events", {
+      method: "POST",
+      body: JSON.stringify({ newEvent }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
 
-    sendData();
+        return response.json().then((data) => {
+          throw new Error(data.message || "Something went wrong!");
+        });
+      })
+      .then((data) => {
+        showNotification({
+          title: "Success!",
+          message: "Your event was saved!",
+          status: "success",
+        });
+      })
+      .catch((error) => {
+        showNotification({
+          title: "Error!",
+          message: error.message || "Something went wrong!",
+          status: "error",
+        });
+      });
 
     formref.current?.reset();
   };

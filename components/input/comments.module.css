@@ -18,3 +18,7 @@
 .comments button:active {
   background-color: #dcfff9;
 }
+
+.comments p {
+  font-size: large;
+}

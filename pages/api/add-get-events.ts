@@ -20,7 +20,6 @@ export default async function handler(
 
   if (req.method === "POST") {
     const { newEvent } = req.body;
-
     try {
       const result = await insertDocument(client, "events", newEvent);
       res.status(201).json({ message: "Added event", event: newEvent });
@@ -31,11 +30,11 @@ export default async function handler(
 
   if (req.method === "GET") {
     try {
-      const eventDocuments = getAllEventDocument(client, "events");
+      const eventDocuments = await getAllEventDocument(client, "events");
       res.status(201).json({ events: eventDocuments });
     } catch (error) {
       res.status(500).json({ message: "Getting events failed!" });
     }
   }
-  client.close();
+  // client.close();
 }
