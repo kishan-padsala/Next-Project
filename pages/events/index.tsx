@@ -2,19 +2,23 @@ import React, { Fragment, useEffect, useState } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import EventList from "@/components/events/event-list";
-import { getAllEvents } from "@/helper/api-util";
 import EventsSearch from "@/components/events/events-search";
-import { GetStaticProps } from "next";
 import { DUMMY_EVENTS_TYPE } from "@/types";
+import LinearBuffer from "@/components/ui/linearProgress";
 
-const AllEvenetsPage = ({ events }: { events: DUMMY_EVENTS_TYPE[] }) => {
-  // const [allEvents, setAllEvents] = useState<DUMMY_EVENTS_TYPE[]>([]);
+const AllEvenetsPage = () => {
+  const [allEvents, setAllEvents] = useState<DUMMY_EVENTS_TYPE[]>([]);
+  const [eventsIsLoading, setEventsIsLoading] = useState(false);
 
-  // useEffect(() => {
-  //   fetch("/api/add-get-events")
-  //     .then((response) => response.json())
-  //     .then((data) => setAllEvents(data.events));
-  // }, []);
+  useEffect(() => {
+    setEventsIsLoading(true);
+    fetch("/api/add-get-events")
+      .then((response) => response.json())
+      .then((data) => {
+        setAllEvents(data.events);
+        setEventsIsLoading(false);
+      });
+  }, []);
 
   const router = useRouter();
 
@@ -33,23 +37,25 @@ const AllEvenetsPage = ({ events }: { events: DUMMY_EVENTS_TYPE[] }) => {
           content="Find a lot of great events that allow you to evolve..."
         />
       </Head>
+      {eventsIsLoading && <LinearBuffer/>}
       <EventsSearch onSearch={findEventHandler} />
-      <EventList items={events} />
+      {eventsIsLoading && <p className="loading">Events Loading...</p>}
+      {!eventsIsLoading && <EventList items={allEvents} />}
     </Fragment>
   );
 };
 
-export const getStaticProps: GetStaticProps = async () => {
-  const response = await fetch("http://localhost:3000/api/add-get-events");
-  const data = await response.json();
+// export const getStaticProps: GetStaticProps = async () => {
+//   const response = await fetch("http://localhost:3000/api/add-get-events");
+//   const data = await response.json();
 
-  const events = data.events;
+//   const events = data.events;
 
-  return {
-    props: {
-      events: events,
-    },
-  };
-};
+//   return {
+//     props: {
+//       events: events,
+//     },
+//   };
+// };
 
 export default AllEvenetsPage;

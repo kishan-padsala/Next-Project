@@ -61,3 +61,14 @@ export async function getFeaturedEventDocument(
 
   return documents;
 }
+
+export async function getEventById(
+  client: MongoClient,
+  collection: string,
+  document: {id: string | string[] | undefined}
+) {
+  const db = client.db(); 
+  const documents = db.collection(collection).findOne(document);
+
+  return documents;
+}

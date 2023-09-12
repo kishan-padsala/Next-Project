@@ -32,6 +32,13 @@ ul {
   text-align: center;
 }
 
+.loading {
+  margin: auto;
+  text-align: center;
+  font-size: large;
+  font-weight: bold;
+}
+
 /* html {
   height: 100%;
 }
@@ -226,3 +233,7 @@ body {
 .radio-button {
   margin-bottom: 10px;
 }
+
+/* .css-qhoknl-MuiLinearProgress-bar1{
+  background-color: #94fdfd;
+} */
