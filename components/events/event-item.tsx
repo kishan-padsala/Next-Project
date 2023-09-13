@@ -6,6 +6,7 @@ import DateIcon from "../icons/date-icon";
 import AddressIcon from "../icons/address-icon";
 import ArrowRightIcon from "../icons/arrow-right-icon";
 import classes from "./event-item.module.css";
+import DeleteIcon from "../icons/delete-icon";
 
 const EventItem = ({ event }: { event: DUMMY_EVENTS_TYPE }) => {
   const { id, title, image, date, location } = event;
@@ -17,6 +18,16 @@ const EventItem = ({ event }: { event: DUMMY_EVENTS_TYPE }) => {
   });
   const formattedAddress = location.replace(", ", "\n");
   const exploreLink = `/events/${id}`;
+
+  function deleteEventHandler() {
+    fetch("/api/deleteEvent", {
+      method: "POST",
+      body: JSON.stringify({ id }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  }
 
   return (
     <li className={classes.item}>
@@ -34,6 +45,12 @@ const EventItem = ({ event }: { event: DUMMY_EVENTS_TYPE }) => {
           </div>
         </div>
         <div className={classes.actions}>
+          <button className={classes.deletebtn} onClick={deleteEventHandler}>
+            <span>Delete</span>
+            <span className={classes.icon}>
+              <DeleteIcon />
+            </span>
+          </button>
           <Button link={exploreLink}>
             <span>Explore Event</span>
             <span className={classes.icon}>

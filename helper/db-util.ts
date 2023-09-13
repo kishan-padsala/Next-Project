@@ -20,6 +20,18 @@ export async function insertDocument(
   return result;
 }
 
+export async function deleteDocument(
+  client: MongoClient,
+  collection: string,
+  id: string
+) {
+  const db = client.db();
+
+  const result = await db.collection(collection).deleteOne({ id: id });
+
+  return result;
+}
+
 export async function getAllDocument(
   client: MongoClient,
   collection: string,
