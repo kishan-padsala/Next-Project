@@ -5,19 +5,32 @@ import EventList from "@/components/events/event-list";
 import EventsSearch from "@/components/events/events-search";
 import { DUMMY_EVENTS_TYPE } from "@/types";
 import LinearBuffer from "@/components/ui/linearProgress";
+import ErrorAlert from "@/components/ui/error-alert";
 
 const AllEvenetsPage = () => {
   const [allEvents, setAllEvents] = useState<DUMMY_EVENTS_TYPE[]>([]);
   const [eventsIsLoading, setEventsIsLoading] = useState(false);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     setEventsIsLoading(true);
     fetch("/api/add-get-events")
-      .then((response) => response.json())
-      .then((data) => {
-        setAllEvents(data.events);
-        setEventsIsLoading(false);
-      });
+    .then(async (response) => {
+      if (response.ok) {
+        return response.json();
+      }
+
+      const data = await response.json();
+      throw new Error(data.message || "Something went wrong!");
+    })
+    .then((data) => {
+      setAllEvents(data.events);
+      setEventsIsLoading(false);
+    })
+    .catch((error) => {
+      setEventsIsLoading(false);
+      setError(true);
+    });
   }, []);
 
   const router = useRouter();
@@ -38,8 +51,13 @@ const AllEvenetsPage = () => {
         />
       </Head>
       {eventsIsLoading && <LinearBuffer/>}
-      <EventsSearch onSearch={findEventHandler} />
+      <EventsSearch onSearch={findEventHandler} />      
       {eventsIsLoading && <p className="loading">Events Loading...</p>}
+      {error && (
+        <ErrorAlert>
+          <p>Fetching Events Failed Please Try Again After Some Time!</p>
+        </ErrorAlert>
+      )}
       {!eventsIsLoading && <EventList items={allEvents} />}
     </Fragment>
   );

@@ -65,9 +65,9 @@ export async function getFeaturedEventDocument(
 export async function getEventById(
   client: MongoClient,
   collection: string,
-  document: {id: string | string[] | undefined}
+  document: { id: string | string[] | undefined }
 ) {
-  const db = client.db(); 
+  const db = client.db();
   const documents = db.collection(collection).findOne(document);
 
   return documents;

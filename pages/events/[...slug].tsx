@@ -1,12 +1,12 @@
 import React, { Fragment, useEffect, useState } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import useSWR from "swr";
 import EventList from "@/components/events/event-list";
 import ResultsTitle from "@/components/events/results-title";
 import Button from "@/components/ui/button";
 import ErrorAlert from "@/components/ui/error-alert";
 import { DUMMY_EVENTS_TYPE } from "@/types";
+import LinearBuffer from "@/components/ui/linearProgress";
 // import { GetServerSideProps } from "next";
 
 // type Props = {
@@ -19,26 +19,33 @@ import { DUMMY_EVENTS_TYPE } from "@/types";
 // };
 
 const FilteredEventsPage = () => {
-  const [loadedEvents, setLoadedEvents] = useState<DUMMY_EVENTS_TYPE[]>();
+  const [allEvents, setAllEvents] = useState<DUMMY_EVENTS_TYPE[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(false);
 
   const router = useRouter();
   const filterData = router.query.slug;
 
-  const fetcher = (url: string) => fetch(url).then((res) => res.json());
-  const { data, error } = useSWR(
-    "https://react-http-10be4-default-rtdb.firebaseio.com/events.json",
-    fetcher
-  );
-
   useEffect(() => {
-    if (data) {
-      const events: DUMMY_EVENTS_TYPE[] = [];
-      for (const key in data) {
-        events.push(data[key]);
-      }
-      setLoadedEvents(events);
-    }
-  }, [data]);
+    setIsLoading(true);
+    fetch("/api/add-get-events")
+      .then(async (response) => {
+        if (response.ok) {
+          return response.json();
+        }
+
+        const data = await response.json();
+        throw new Error(data.message || "Something went wrong!");
+      })
+      .then((data) => {
+        setAllEvents(data.events);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        setError(true);
+        setIsLoading(false);
+      });
+  }, []);
 
   let pageHeadData = (
     <Head>
@@ -47,11 +54,14 @@ const FilteredEventsPage = () => {
     </Head>
   );
 
-  if (!filterData || !loadedEvents) {
+  if (!filterData || isLoading) {
     return (
       <Fragment>
         {pageHeadData}
-        <p className="center">Loading...</p>
+        {isLoading && <LinearBuffer />}
+        <p className="loading" style={{ marginTop: "28px" }}>
+          Events Loading...
+        </p>
       </Fragment>
     );
   }
@@ -78,8 +88,7 @@ const FilteredEventsPage = () => {
     numYear > 2023 ||
     numYear < 2021 ||
     numMonth < 1 ||
-    numMonth > 12 ||
-    error
+    numMonth > 12
   ) {
     return (
       <Fragment>
@@ -94,13 +103,30 @@ const FilteredEventsPage = () => {
     );
   }
 
-  const filteredEvents = loadedEvents.filter((event) => {
-    const eventDate = new Date(event.date);
+  if (error) {
     return (
-      eventDate.getFullYear() === numYear &&
-      eventDate.getMonth() === numMonth - 1
+      <Fragment>
+        {pageHeadData}
+        <ErrorAlert>
+          <p>Fetching Events Failed Please Try Again After Some Time!</p>
+        </ErrorAlert>
+        <div className="center">
+          <Button link="/events">Show All Events</Button>
+        </div>
+      </Fragment>
     );
-  });
+  }
+
+  let filteredEvents;
+  if (allEvents) {
+    filteredEvents = allEvents.filter((event) => {
+      const eventDate = new Date(event.date);
+      return (
+        eventDate.getFullYear() === numYear &&
+        eventDate.getMonth() === numMonth - 1
+      );
+    });
+  }
 
   if (!filteredEvents || filteredEvents.length === 0) {
     return (

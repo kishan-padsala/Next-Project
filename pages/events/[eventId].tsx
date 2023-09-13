@@ -12,40 +12,54 @@ import LinearBuffer from "@/components/ui/linearProgress";
 const EventDetailPage = () => {
   const [event, setEvent] = useState<DUMMY_EVENTS_TYPE | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(false);
   const router = useRouter();
   const eventId = router.query.eventId;
-  console.log(eventId);
   useEffect(() => {
-    setIsLoading(true);
-    if(eventId){
+    if (eventId) {
+      setIsLoading(true);
       fetch(`http://localhost:3000/api/events/${eventId}`)
-        .then((response) => response.json())
+        .then(async (response) => {
+          if (response.ok) {
+            return response.json();
+          }
+
+          const data = await response.json();
+          throw new Error(data.message || "Something went wrong!");
+        })
         .then((data) => {
           setEvent(data.eventDetailPage);
           setIsLoading(false);
+        })
+        .catch((error) => {
+          setError(true);
+          setIsLoading(false);
         });
     }
-  }, []);
-
-  if (!event) {
-    return (
-      <Fragment>
-        <ErrorAlert>
-          <p>No event found!</p>
-        </ErrorAlert>
-      </Fragment>
-    );
-  }
+  }, [eventId]);
 
   return (
     <Fragment>
-      <Head>
-        <title>{event.title}</title>
-        <meta name="description" content={event.title} />
-      </Head>
-      {isLoading && <LinearBuffer />}
-      {isLoading && <p className="loading">Event Details Loading...</p>}
-      {!isLoading && (
+      {event && (
+        <Head>
+          <title>{event.title}</title>
+          <meta name="description" content={event.title} />
+        </Head>
+      )}
+      {error && (
+        <ErrorAlert>
+          <p>No event found!</p>
+        </ErrorAlert>
+      )}
+      {isLoading && !error ? <LinearBuffer /> : ""}
+      {isLoading && !error ? (
+        <p className="loading" style={{ marginTop: "35px" }}>
+          Event Details Loading...
+        </p>
+      ) : (
+        ""
+      )}
+      {!isLoading && event && (
         <>
           <EventSummary title={event!.title} />
           <EventLogistics

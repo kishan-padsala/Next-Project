@@ -4,18 +4,31 @@ import EventList from "@/components/events/event-list";
 import { DUMMY_EVENTS_TYPE } from "@/types";
 import NewsletterRegistration from "@/components/input/newsletter-registration";
 import LinearBuffer from "@/components/ui/linearProgress";
+import ErrorAlert from "@/components/ui/error-alert";
 
 const HomePage = () => {
   const [featuredEvents, setFeaturedEvents] = useState<DUMMY_EVENTS_TYPE[]>([]);
   const [eventsIsLoading, setEventsIsLoading] = useState(false);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     setEventsIsLoading(true);
     fetch("/api/getFeaturedEvents")
-      .then((response) => response.json())
+      .then(async (response) => {
+        if (response.ok) {
+          return response.json();
+        }
+
+        const data = await response.json();
+        throw new Error(data.message || "Something went wrong!");
+      })
       .then((data) => {
         setFeaturedEvents(data.events);
         setEventsIsLoading(false);
+      })
+      .catch((error) => {
+        setEventsIsLoading(false);
+        setError(true);
       });
   }, []);
 
@@ -28,10 +41,15 @@ const HomePage = () => {
         <meta
           name="description"
           content="Find a lot of great events that allow you to evolve..."
-        />        
+        />
       </Head>
       {eventsIsLoading && <LinearBuffer />}
       <NewsletterRegistration />
+      {error && (
+        <ErrorAlert>
+          <p>Fetching Events Failed Please Try Again After Some Time!</p>
+        </ErrorAlert>
+      )}
       {eventsIsLoading && <p className="loading">Events Loading...</p>}
       {!eventsIsLoading && <EventList items={featuredEvents} />}
     </Fragment>
