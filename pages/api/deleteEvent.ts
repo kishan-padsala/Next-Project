@@ -18,9 +18,9 @@ import {
     }
   
     if (req.method === "POST") {
-      const { id } = req.body;
+      const { eventId } = req.body;
       try {
-        const result = await deleteDocument(client, "events", id);
+        const result = await deleteDocument(client, "events", eventId);
         res.status(201).json({ message: "Added event", event: result });
       } catch (error) {
         res.status(500).json({ message: "Inserting new event is failed!" });

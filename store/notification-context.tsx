@@ -5,6 +5,10 @@ const contextDefaultValue: contextValueType = {
   notification: null,
   showNotification: function (notificationData: notificationDataType) {},
   hideNotification: function () {},
+  showModal: false,
+  openModal: function (id) {},
+  closeModal: function () {},
+  eventId: ""
 };
 
 const NotificationContext = createContext(contextDefaultValue);
@@ -16,6 +20,9 @@ export const NotificationContextProvider = ({
 }) => {
   const [activeNotification, setActiveNotification] =
     useState<notificationDataType | null>(null);
+
+  const [showModal, setShowModal] = useState(false);
+  const [eventId, setEventId] = useState<string>("");
 
   useEffect(() => {
     if (
@@ -41,10 +48,23 @@ export const NotificationContextProvider = ({
     setActiveNotification(null);
   };
 
+  const openModalHandler = (id: string) => {    
+    setEventId(id);
+    setShowModal(true);
+  }
+
+  const closeModalHandler = () => {
+    setShowModal(false);
+  }
+
   const context = {
     notification: activeNotification,
     showNotification: showNotificationHandler,
     hideNotification: hideNotificationHandler,
+    showModal: showModal,
+    openModal: openModalHandler,
+    closeModal: closeModalHandler,
+    eventId: eventId
   };
 
   return (

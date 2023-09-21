@@ -6,32 +6,39 @@ import EventsSearch from "@/components/events/events-search";
 import { DUMMY_EVENTS_TYPE } from "@/types";
 import LinearBuffer from "@/components/ui/linearProgress";
 import ErrorAlert from "@/components/ui/error-alert";
+import { GetStaticProps } from "next/types";
 
-const AllEvenetsPage = () => {
-  const [allEvents, setAllEvents] = useState<DUMMY_EVENTS_TYPE[]>([]);
-  const [eventsIsLoading, setEventsIsLoading] = useState(false);
-  const [error, setError] = useState(false);
+const AllEvenetsPage = ({
+  events,
+  error,
+}: {
+  events: DUMMY_EVENTS_TYPE[];
+  error: boolean;
+}) => {
+  // const [allEvents, setAllEvents] = useState<DUMMY_EVENTS_TYPE[]>([]);
+  // const [eventsIsLoading, setEventsIsLoading] = useState(false);
+  // const [error, setError] = useState(false);
 
-  useEffect(() => {
-    setEventsIsLoading(true);
-    fetch("/api/add-get-events")
-    .then(async (response) => {
-      if (response.ok) {
-        return response.json();
-      }
+  // useEffect(() => {
+  //   setEventsIsLoading(true);
+  //   fetch("/api/add-get-events")
+  //   .then(async (response) => {
+  //     if (response.ok) {
+  //       return response.json();
+  //     }
 
-      const data = await response.json();
-      throw new Error(data.message || "Something went wrong!");
-    })
-    .then((data) => {
-      setAllEvents(data.events);
-      setEventsIsLoading(false);
-    })
-    .catch((error) => {
-      setEventsIsLoading(false);
-      setError(true);
-    });
-  }, []);
+  //     const data = await response.json();
+  //     throw new Error(data.message || "Something went wrong!");
+  //   })
+  //   .then((data) => {
+  //     setAllEvents(data.events);
+  //     setEventsIsLoading(false);
+  //   })
+  //   .catch((error) => {
+  //     setEventsIsLoading(false);
+  //     setError(true);
+  //   });
+  // }, []);
 
   const router = useRouter();
 
@@ -50,30 +57,43 @@ const AllEvenetsPage = () => {
           content="Find a lot of great events that allow you to evolve..."
         />
       </Head>
-      {eventsIsLoading && <LinearBuffer/>}
-      <EventsSearch onSearch={findEventHandler} />      
-      {eventsIsLoading && <p className="loading">Events Loading...</p>}
+      {/* {eventsIsLoading && <LinearBuffer/>} */}
+      <EventsSearch onSearch={findEventHandler} />
+      {/* {eventsIsLoading && <p className="loading">Events Loading...</p>} */}
       {error && (
         <ErrorAlert>
           <p>Fetching Events Failed Please Try Again After Some Time!</p>
         </ErrorAlert>
       )}
-      {!eventsIsLoading && <EventList items={allEvents} />}
+      {!error && <EventList items={events} />} {/* !eventsIsLoading &&  */}
     </Fragment>
   );
 };
 
-// export const getStaticProps: GetStaticProps = async () => {
-//   const response = await fetch("http://localhost:3000/api/add-get-events");
-//   const data = await response.json();
+export const getStaticProps: GetStaticProps = async () => {
+  let events;
+  let error;
+  try {
+    const response = await fetch("http://localhost:3000/api/add-get-events");
 
-//   const events = data.events;
+    if (response.ok) {
+      const data = await response.json();
+      events = data.events;
+      error = false;
+    } else {
+      const data = await response.json();
+      throw new Error(data.message || "Something went wrong!");
+    }
+  } catch (e) {
+    error = true;
+  }
 
-//   return {
-//     props: {
-//       events: events,
-//     },
-//   };
-// };
+  return {
+    props: {
+      events: events || null,
+      error: error,
+    },
+  };
+};
 
 export default AllEvenetsPage;

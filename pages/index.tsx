@@ -6,31 +6,37 @@ import NewsletterRegistration from "@/components/input/newsletter-registration";
 import LinearBuffer from "@/components/ui/linearProgress";
 import ErrorAlert from "@/components/ui/error-alert";
 
-const HomePage = () => {
-  const [featuredEvents, setFeaturedEvents] = useState<DUMMY_EVENTS_TYPE[]>([]);
-  const [eventsIsLoading, setEventsIsLoading] = useState(false);
-  const [error, setError] = useState(false);
+const HomePage = ({
+  featuredEvents,
+  error,
+}: {
+  featuredEvents: DUMMY_EVENTS_TYPE[];
+  error: boolean;
+}) => {
+  // const [featuredEvents, setFeaturedEvents] = useState<DUMMY_EVENTS_TYPE[]>([]);
+  // const [eventsIsLoading, setEventsIsLoading] = useState(false);
+  // const [error, setError] = useState(false);
 
-  useEffect(() => {
-    setEventsIsLoading(true);
-    fetch("/api/getFeaturedEvents")
-      .then(async (response) => {
-        if (response.ok) {
-          return response.json();
-        }
+  // useEffect(() => {
+  //   setEventsIsLoading(true);
+  //   fetch("/api/getFeaturedEvents")
+  //     .then(async (response) => {
+  //       if (response.ok) {
+  //         return response.json();
+  //       }
 
-        const data = await response.json();
-        throw new Error(data.message || "Something went wrong!");
-      })
-      .then((data) => {
-        setFeaturedEvents(data.events);
-        setEventsIsLoading(false);
-      })
-      .catch((error) => {
-        setEventsIsLoading(false);
-        setError(true);
-      });
-  }, []);
+  //       const data = await response.json();
+  //       throw new Error(data.message || "Something went wrong!");
+  //     })
+  //     .then((data) => {
+  //       setFeaturedEvents(data.events);
+  //       setEventsIsLoading(false);
+  //     })
+  //     .catch((error) => {
+  //       setEventsIsLoading(false);
+  //       setError(true);
+  //     });
+  // }, []);
 
   // let featuredEvents: DUMMY_EVENTS_TYPE[] = [];
   // featuredEvents = allEvents.filter((event) => event.isFeatured === true);
@@ -43,35 +49,44 @@ const HomePage = () => {
           content="Find a lot of great events that allow you to evolve..."
         />
       </Head>
-      {eventsIsLoading && <LinearBuffer />}
+      {/* {eventsIsLoading && <LinearBuffer />} */}
       <NewsletterRegistration />
       {error && (
         <ErrorAlert>
           <p>Fetching Events Failed Please Try Again After Some Time!</p>
         </ErrorAlert>
       )}
-      {eventsIsLoading && <p className="loading">Events Loading...</p>}
-      {!eventsIsLoading && <EventList items={featuredEvents} />}
+      {/* {eventsIsLoading && <p className="loading">Events Loading...</p>} */}
+      {!error && <EventList items={featuredEvents} />} {/* !eventsIsLoading &&  */}
     </Fragment>
   );
 };
 
-// export async function getStaticProps() {
-//   // const response = await fetch("/api/getFeaturedEvents");
-//   // const data = await response.json();
+export async function getStaticProps() {
+  let featuredEvents;
+  let error;
+  try {
+    const response = await fetch("http://localhost:3000/api/getFeaturedEvents");
 
-//   // const featuredEvents = data.events;
+    if (response.ok) {
+      const data = await response.json();
+      featuredEvents = data.events;
+      error = false;
+    } else {
+      const data = await response.json();
+      throw new Error(data.message || "Something went wrong!");
+    }
+  } catch (e) {
+    error = true;
+  }
 
-//   const response = await fetch("http://localhost:3000/api/getFeaturedEvents");
-//   const data = await response.json();
-
-//   const featuredEvents = data.events;
-//   return {
-//     props: {
-//       featuredEvents: featuredEvents,
-//     },
-//     revalidate: 1800,
-//   };
-// }
+  return {
+    props: {
+      featuredEvents: featuredEvents || null,
+      error: error,
+    },
+    revalidate: 1800,
+  };
+}
 
 export default HomePage;

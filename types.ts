@@ -21,6 +21,10 @@ export type contextValueType = {
   notification: notificationDataType | null;
   showNotification: (notificationData: notificationDataType) => void;
   hideNotification: () => void;
+  showModal: boolean;
+  openModal: (id: string) => void;
+  closeModal: () => void;
+  eventId: string;
 };
 
 export type notificationDataType = {

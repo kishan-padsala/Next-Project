@@ -1,8 +1,9 @@
-import React, { Fragment, ReactNode } from "react";
+import React, { Fragment, ReactNode, useState } from "react";
 import MainHeader from "./main-header";
 import Notification from "../ui/notification";
 import NotificationContext from "@/store/notification-context";
 import { useContext } from "react";
+import TransitionsModal from "../ui/modal";
 
 const Layout = ({ children }: { children: ReactNode }) => {
   const notificationCtx = useContext(NotificationContext);
@@ -10,7 +11,8 @@ const Layout = ({ children }: { children: ReactNode }) => {
 
   return (
     <Fragment>
-      <MainHeader />
+      <MainHeader />     
+      <TransitionsModal />
       <main>{children}</main>
       {notification && (
         <Notification
